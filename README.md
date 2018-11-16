@@ -1,4 +1,4 @@
-# createBatchId
+# UIdGenerator
 
 This is a Spring Boot Rest Service that provision a sequential 4-6 characters id one at a time. It is tested on Java 8.
 /getNextId                    # get the next id in memory
