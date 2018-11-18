@@ -37,47 +37,19 @@ public class UIDServiceTests {
     private MockMvc mockMvc;
 
     @Test
-    public void resetToZero() throws Exception {
-        this.mockMvc.perform(get("/reset")).andDo(print()).andExpect(status().isOk())
-                    .andExpect(content().string("Input is reset to 0"));
-        this.mockMvc.perform(get("/getNextId")).andDo(print()).andExpect(status().isOk())
-                    .andExpect(content().string("{\"uId\":\"BBBBBB\",\"input\":0}"));
-        this.mockMvc.perform(get("/getNextId")).andDo(print()).andExpect(status().isOk())
-                    .andExpect(content().string("{\"uId\":\"CBBBBB\",\"input\":1}"));
-        this.mockMvc.perform(get("/getNextId")).andDo(print()).andExpect(status().isOk())
-                    .andExpect(content().string("{\"uId\":\"DBBBBB\",\"input\":2}"));
+    public void getInvalidId() throws Exception {
+        this.mockMvc.perform(get("/id/invalidInput")).andDo(print()).andExpect(status().is4xxClientError());
     }
 
     @Test
-    public void resetTo1000() throws Exception {
-        this.mockMvc.perform(get("/reset/10000")).andDo(print()).andExpect(status().isOk())
-                    .andExpect(content().string("Input is reset to 10000"));
-        this.mockMvc.perform(get("/getNextId")).andDo(print()).andExpect(status().isOk())
-                    .andExpect(content().string("{\"uId\":\"GLRBBB\",\"input\":10000}"));
-        this.mockMvc.perform(get("/getNextId")).andDo(print()).andExpect(status().isOk())
-                    .andExpect(content().string("{\"uId\":\"HLRBBB\",\"input\":10001}"));
-        this.mockMvc.perform(get("/getNextId")).andDo(print()).andExpect(status().isOk())
-                    .andExpect(content().string("{\"uId\":\"JLRBBB\",\"input\":10002}"));
-
-    }
-
-    @Test
-    public void resetToMax() throws Exception {
-        this.mockMvc.perform(get("/reset/1269789695")).andDo(print()).andExpect(status().isOk())
-                    .andExpect(content().string("Input is reset to 1269789695"));
-        this.mockMvc.perform(get("/getNextId")).andDo(print()).andExpect(status().isOk())
-                    .andExpect(content().string("{\"uId\":\"Z99999\",\"input\":1269789695}"));
-    }
-
-    @Test
-    public void getInvalidCharLength() throws Exception {
-    }
-
-    @Test
-    public void resetToVeryLargeNumber() throws Exception {
-    }
-
-    @Test
-    public void getIdWithInvalidLength() throws Exception {
+    public void getValidId() throws Exception {
+        this.mockMvc.perform(get("/id/1000")).andDo(print()).andExpect(status().isOk())
+                    .andExpect(content().string("{\"input\":1000,\"uid\":\"RPCBBB\"}"));
+        this.mockMvc.perform(get("/id/1000/length/6")).andDo(print()).andExpect(status().isOk())
+                    .andExpect(content().string("{\"input\":1000,\"uid\":\"RPCBBB\"}"));
+        this.mockMvc.perform(get("/id/1000/length/5")).andDo(print()).andExpect(status().isOk())
+                    .andExpect(content().string("{\"input\":1000,\"uid\":\"RPCBB\"}"));
+        this.mockMvc.perform(get("/id/1000/length/4")).andDo(print()).andExpect(status().isOk())
+                    .andExpect(content().string("{\"input\":1000,\"uid\":\"RPCB\"}"));
     }
 }
