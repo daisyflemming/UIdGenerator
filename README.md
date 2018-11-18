@@ -10,7 +10,7 @@ recording: https://photos.app.goo.gl/CDPB7BYELab3BtpbA
 
 Assumption: 
 * the maximum no. of id that can be generated are 21 x 36^5
-* there are actually 3 pools of id:
+* there are  3 pools of id:
   range for 4 char long = 0, 1, 2, ..., 21X36^3
   range for 5 char long = 0, 1, 2, ..., 21X36^4
   range for 6 char long = 0, 1, 2, ..., 21X36^5

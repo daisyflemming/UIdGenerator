@@ -39,7 +39,6 @@ public class UIDServiceTests {
     @Test
     public void getInvalidId() throws Exception {
         this.mockMvc.perform(get("/id/invalidInput")).andDo(print()).andExpect(status().is4xxClientError());
-
     }
 
     @Test
