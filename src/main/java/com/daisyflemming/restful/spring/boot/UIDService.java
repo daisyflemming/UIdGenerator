@@ -64,9 +64,7 @@ public class UIDService {
 
         // there are different pools for different char length, retrieve the pool accordingly
         int idLength = length.orElse(maxLength);
-        if (idProvisioned.get(idLength) == null) {
-            idProvisioned.put(idLength, new ArrayList<UID>());
-        }
+        idProvisioned.computeIfAbsent(idLength, k -> new ArrayList<UID>());
         ArrayList<UID> pool = idProvisioned.get(idLength);
         if (pool.size() == getMaxValue(idLength) + 1) {
             throw new RuntimeException(UID_EXHAUSTED);
@@ -87,11 +85,24 @@ public class UIDService {
         return uid;
     }
 
+    /**
+     *
+     * @param input is an integer.
+     * @return a UID.
+     * @throws Exception would be thrown when no UID can be generate with the input, e.g. input is a string.
+     */
     @RequestMapping(value = {"/id/{input}"}, method = RequestMethod.GET)
     public UID queryId(@PathVariable int input) throws Exception {
         return queryId(input, maxLength);
     }
 
+    /**
+     *
+     * @param input is an integer value.
+     * @param length is the character length of the uid.
+     * @return a UID.
+     * @throws Exception if parameter is invalid or no UID can be generated with the specified parameters.
+     */
     @RequestMapping(value = {"/id/{input}/length/{length}"}, method = RequestMethod.GET)
     public UID queryId(@PathVariable int input, @PathVariable int length) throws Exception {
         if (input > getMaxValue(length)) {
@@ -118,15 +129,25 @@ public class UIDService {
         return String.valueOf(alphanumerics[input % base]) + convertToString(input / base, count + 1, length);
     }
 
-    // range for 4 char long = 0, 1, 2, ..., 21X36^3
-    // range for 5 char long = 0, 1, 2, ..., 21X36^4
-    // range for 6 char long = 0, 1, 2, ..., 21X36^5
+    /**
+     *
+     * @param length of characters assigned.
+     * @return a UID that is within the range of a given length, e.g.
+     *         range for 4 char long = 0, 1, 2, ..., 21X36^3
+     *         range for 5 char long = 0, 1, 2, ..., 21X36^4
+     *         range for 6 char long = 0, 1, 2, ..., 21X36^5
+     * @throws Exception when random integer generated is out of range
+     */
     private UID getRandomInt(int length) throws Exception {
         int xMax = getMaxValue(length);
         int uid_Int = new Random().nextInt(xMax);
         return new UID(uid_Int, convertToString(uid_Int, 0, length - 1));
     }
 
+    /**
+     * @param length of characters assigned
+     * @return the max UID we can have for a given character length
+     */
     int getMaxValue(int length) {
         return Arrays.stream(Arrays.copyOfRange(bases, 0, length)).reduce(1, (a, b) -> a * b) - 1;
     }
