@@ -38,10 +38,15 @@ public class UIDService {
      */
     private HashMap<Integer,ArrayList<UID>> idProvisioned = new HashMap<Integer,ArrayList<UID>>();
 
+    /**
+     * Error messages
+     */
     String LENGTH_OUT_OF_RANGE = "No. of character requested is out of range. " +
         "Please select between " + minLength + " and " + maxLength + ".";
     String INPUT_OUT_OF_RANGE = "Input entered cannot be presented by the selected character length ";
     String NO_UID_AVAILABLE = "No more UId available.";
+
+
     /**
      * This method will take a query parameter length= minLength ... maxLength.
      * If no parameter is given, maxLength will be used
@@ -57,13 +62,10 @@ public class UIDService {
             throw new RuntimeException(LENGTH_OUT_OF_RANGE);
         }
 
-        // coast clear, proceed
-        int idLength = length.orElse(maxLength);
-
         // there are different pools for different char length, retrieve the pool accordingly
-        int maxValue = getMaxValue(idLength);
+        int idLength = length.orElse(maxLength);
         ArrayList pool = idProvisioned.get(idLength);
-        if (pool.size() == maxValue + 1) {
+        if (pool.size() == getMaxValue(idLength) + 1) {
             throw new RuntimeException(NO_UID_AVAILABLE);
         }
 
@@ -71,7 +73,7 @@ public class UIDService {
         do {
             uid = getRandomInt(idLength);
         }
-        while (pool.contains(uid) || uid.input > maxValue);
+        while (pool.contains(uid) || uid.input > getMaxValue(idLength));
         pool.add(uid);
         // sorting make execution of contains quicker O(logN) instead of O(N).
         Collections.sort(pool);
