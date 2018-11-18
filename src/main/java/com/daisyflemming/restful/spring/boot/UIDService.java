@@ -20,23 +20,24 @@ public class UIDService {
      */
     private char[] alphanumerics = generateAlphanumericCharacters();
     /**
-     * bases represent the no. of alphanumeric character that each character can choose from in each position.
+     * bases represent the no. of alphanumeric character that each character can choose from
+     * in each position.
      * e.g. the 1st character can choose from the 21 consonants.
      */
     private final int[] bases = {21, 36, 36, 36, 36, 36};
     /**
-     * maxLength is the maximum length of character for a uid
+     * maxLength is the maximum length of character for a uid.
      */
     final int maxLength = 6;
     /**
-     * minLength is the minimum length of character for a uid
+     * minLength is the minimum length of character for a uid.
      */
     private final int minLength = 4;
     /**
      * id will be cached in the pool with the same char length. Ideally this should be stored
      * in a database or a file so when spring reboot, it can be restored.
      */
-    private HashMap<Integer,ArrayList<UID>> idProvisioned = new HashMap<Integer,ArrayList<UID>>();
+    private HashMap<Integer, ArrayList<UID>> idProvisioned = new HashMap<Integer, ArrayList<UID>>();
 
     /**
      * Error messages
@@ -44,8 +45,7 @@ public class UIDService {
     String LENGTH_OUT_OF_RANGE = "No. of character requested is out of range. " +
         "Please select between " + minLength + " and " + maxLength + ".";
     String INPUT_OUT_OF_RANGE = "Input entered cannot be presented by the selected character length ";
-    String NO_UID_AVAILABLE = "No more UId available.";
-
+    String UID_EXHAUSTED = "No more UId available.";
 
     /**
      * This method will take a query parameter length= minLength ... maxLength.
@@ -64,11 +64,18 @@ public class UIDService {
 
         // there are different pools for different char length, retrieve the pool accordingly
         int idLength = length.orElse(maxLength);
-        ArrayList pool = idProvisioned.get(idLength);
+        if (idProvisioned.get(idLength) == null) {
+            idProvisioned.put(idLength, new ArrayList<UID>());
+        }
+        ArrayList<UID> pool = idProvisioned.get(idLength);
         if (pool.size() == getMaxValue(idLength) + 1) {
-            throw new RuntimeException(NO_UID_AVAILABLE);
+            throw new RuntimeException(UID_EXHAUSTED);
         }
 
+        return getUid(idLength, pool);
+    }
+
+    private UID getUid(int idLength, ArrayList<UID> pool) throws Exception {
         UID uid;
         do {
             uid = getRandomInt(idLength);
@@ -87,7 +94,7 @@ public class UIDService {
 
     @RequestMapping(value = {"/id/{input}/length/{length}"}, method = RequestMethod.GET)
     public UID queryId(@PathVariable int input, @PathVariable int length) throws Exception {
-        if (input > getMaxValue(length)){
+        if (input > getMaxValue(length)) {
             throw new RuntimeException(INPUT_OUT_OF_RANGE);
         }
         return new UID(input, convertToString(input, 0, length - 1));

@@ -70,6 +70,24 @@ public class UIDServiceFunctionTests {
     public void getAnOutOfRangeNumber() throws Exception {
         exceptionRule.expect(RuntimeException.class);
         exceptionRule.expectMessage(service.INPUT_OUT_OF_RANGE);
-        service.queryId(service.getMaxValue(service.maxLength)+1);
+        service.queryId(service.getMaxValue(service.maxLength) + 1);
     }
+
+    @Test
+    public void compareUId() {
+        UID uid1 = new UID(1000, "RPCB");
+        UID uid2 = new UID(1001, "SPCB");
+        assertEquals(uid1.compareTo(uid2), -1);
+        assertEquals(uid1.compareTo(uid1), 0);
+        assertEquals(uid2.compareTo(uid1), 1);
+
+    }
+
+    @Test
+    public void hashCodeTest() {
+        UID uid1 = new UID(1000, "RPCBBB");
+        UID uid2 = new UID(1000, "RPCB");
+        assertTrue(uid1.hashCode() != uid2.hashCode());
+    }
+
 }

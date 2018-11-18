@@ -45,23 +45,12 @@ public class UIDServiceTests {
     @Test
     public void getValidId() throws Exception {
         this.mockMvc.perform(get("/id/1000")).andDo(print()).andExpect(status().isOk())
-                    .andExpect(content().string("{\"uid\":\"RPCBBB\",\"input\":1000}"));
+                    .andExpect(content().string("{\"input\":1000,\"uid\":\"RPCBBB\"}"));
         this.mockMvc.perform(get("/id/1000/length/6")).andDo(print()).andExpect(status().isOk())
-                    .andExpect(content().string("{\"uid\":\"RPCBBB\",\"input\":1000}"));
+                    .andExpect(content().string("{\"input\":1000,\"uid\":\"RPCBBB\"}"));
         this.mockMvc.perform(get("/id/1000/length/5")).andDo(print()).andExpect(status().isOk())
-                    .andExpect(content().string("{\"uid\":\"RPCBB\",\"input\":1000}"));
+                    .andExpect(content().string("{\"input\":1000,\"uid\":\"RPCBB\"}"));
         this.mockMvc.perform(get("/id/1000/length/4")).andDo(print()).andExpect(status().isOk())
-                    .andExpect(content().string("{\"uid\":\"RPCB\",\"input\":1000}"));
-    }
-
-    @Test
-    public void getOutOfRangeValue() throws Exception {
-        this.mockMvc.perform(get("/id/1000000")).andDo(print()).andExpect(status().isOk())
-                    .andExpect(content().string("{\"uid\":\"C10BCB\",\"input\":1000000}"));
-        this.mockMvc.perform(get("/id/1000000/length/6")).andDo(print()).andExpect(status().isOk())
-                    .andExpect(content().string("{\"uid\":\"C10BCB\",\"input\":1000000}"));
-        this.mockMvc.perform(get("/id/1000000/length/5")).andDo(print()).andExpect(status().isOk())
-                    .andExpect(content().string("{\"uid\":\"C10BC\",\"input\":1000000}"));
-        this.mockMvc.perform(get("/id/1000000/length/4")).andDo(print()).andExpect(status().is5xxServerError());
+                    .andExpect(content().string("{\"input\":1000,\"uid\":\"RPCB\"}"));
     }
 }
