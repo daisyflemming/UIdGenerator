@@ -10,7 +10,10 @@ recording: https://photos.app.goo.gl/CDPB7BYELab3BtpbA
 
 Assumption: 
 * the maximum no. of id that can be generated are 21 x 36^5
-* regardless the length of character required, the id would be drawn from the same pool
+* there are actually 3 pools of id:
+  range for 4 char long = 0, 1, 2, ..., 21X36^3
+  range for 5 char long = 0, 1, 2, ..., 21X36^4
+  range for 6 char long = 0, 1, 2, ..., 21X36^5
 
 How to build the project in Intellij
 - git clone or download this project to your mac
